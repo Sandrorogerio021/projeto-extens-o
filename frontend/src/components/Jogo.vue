@@ -52,6 +52,9 @@ const props = defineProps(['user']);
 const pontos = ref(0);
 const desafio = ref({});
 
+// URL do seu servidor oficial no Render
+const API_URL = 'https://portal-magico.onrender.com';
+
 // Biblioteca Estendida de Formas
 const bibliotecaFormas = [
   { nome: 'Quadrado', icon: Square, cor: '#FF6B6B' },
@@ -63,7 +66,6 @@ const bibliotecaFormas = [
 ];
 
 const gerarDesafio = () => {
-  // Alterna automaticamente entre Matemática (50%) e Formas (50%)
   const tipoSorteado = Math.random() > 0.5 ? 'math' : 'shapes';
 
   if (tipoSorteado === 'math') {
@@ -71,7 +73,6 @@ const gerarDesafio = () => {
     const n2 = Math.floor(Math.random() * 10);
     const resultadoCorreto = n1 + n2;
     
-    // Geração de alternativas únicas
     const opcoes = new Set([resultadoCorreto]);
     while (opcoes.size < 4) {
       const erro = Math.max(0, resultadoCorreto + (Math.floor(Math.random() * 5) - 2));
@@ -85,12 +86,10 @@ const gerarDesafio = () => {
       opcoes: Array.from(opcoes).sort(() => Math.random() - 0.5)
     };
   } else {
-    // Embaralha a biblioteca e seleciona 4 formas distintas para a tela
     const selecionadas = [...bibliotecaFormas]
       .sort(() => Math.random() - 0.5)
       .slice(0, 4);
     
-    // Escolhe uma das 4 selecionadas para ser a pergunta
     const alvo = selecionadas[Math.floor(Math.random() * selecionadas.length)];
 
     desafio.value = {
@@ -115,16 +114,16 @@ const verificar = async (valor) => {
     });
   }
 
-  // Envia os dados para o seu Backend Node.js (SQLite/MongoDB)
+  // Envia os dados para o Render
   try {
-    await axios.post('http://localhost:3000/respostas', {
+    await axios.post(`${API_URL}/respostas`, {
       aluno_id: props.user.id,
       pergunta: desafio.value.pergunta,
       resposta_dada: String(valor),
       correta: acertou
     });
   } catch (e) {
-    console.error("Servidor offline, mas o jogo continua!");
+    console.error("Erro ao salvar resposta no Render:", e);
   }
 
   gerarDesafio();

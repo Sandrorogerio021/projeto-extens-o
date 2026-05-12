@@ -31,19 +31,24 @@ const emit = defineEmits(['logado']);
 const role = ref('aluno');
 const form = reactive({ nome: '', idade: '', senha: '' });
 
+// Definimos a URL base do seu servidor no Render
+const API_URL = 'https://portal-magico.onrender.com';
+
 const entrar = async () => {
   if (!form.nome) return alert("Digite seu nome!");
   try {
-    // Tenta login, se falhar (404), tenta cadastrar
-    const res = await axios.post('http://localhost:3000/login', { ...form, role: role.value })
+    // Tenta login usando a URL do Render
+    const res = await axios.post(`${API_URL}/login`, { ...form, role: role.value })
       .catch(async () => {
-        return await axios.post('http://localhost:3000/cadastro', { ...form, role: role.value });
+        // Se falhar (usuário não existe), tenta cadastrar no Render
+        return await axios.post(`${API_URL}/cadastro`, { ...form, role: role.value });
       });
     
     const userData = { ...form, id: res.data.id || res.data, role: role.value };
     emit('logado', userData);
   } catch (e) {
-    alert("Erro na conexão com o servidor!");
+    alert("Erro na conexão com o servidor mágico!");
+    console.error(e);
   }
 };
 </script>

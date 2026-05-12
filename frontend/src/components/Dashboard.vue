@@ -6,6 +6,11 @@
     </div>
 
     <div class="grid gap-4">
+      <!-- Se não houver dados ainda -->
+      <div v-if="dados.length === 0" class="text-center py-10 text-gray-400">
+        Nenhuma resposta registrada ainda no Portal Mágico.
+      </div>
+
       <div v-for="r in dados" :key="r.id" class="flex items-center justify-between p-5 bg-gray-50 rounded-2xl border-l-8 transition-all hover:translate-x-2" 
         :class="r.correta ? 'border-green-400' : 'border-red-400'">
         <div>
@@ -28,9 +33,17 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 const dados = ref([]);
+
+// URL oficial do seu backend no Render
+const API_URL = 'https://portal-magico.onrender.com';
+
 const atualizar = async () => {
-  const res = await axios.get('http://localhost:3000/admin/relatorio');
-  dados.value = res.data;
+  try {
+    const res = await axios.get(`${API_URL}/admin/relatorio`);
+    dados.value = res.data;
+  } catch (error) {
+    console.error("Erro ao carregar relatório do Render:", error);
+  }
 };
 
 onMounted(atualizar);
