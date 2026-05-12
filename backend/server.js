@@ -11,15 +11,14 @@ const knex = require('knex')({
 const app = express();
 app.use(cors());
 app.use(express.json());
-
 const path = require('path');
+
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
-app.all(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
-
 
 async function initDB() {
     try {
