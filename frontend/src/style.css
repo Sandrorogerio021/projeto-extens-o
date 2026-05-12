@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+body {
+
+  background-image: url('/fundo.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  @apply min-h-screen;
+}
+.card-infantil {
+  @apply bg-white/90 backdrop-blur-md rounded-[2.5rem] border-b-[8px] border-gray-200/50 p-8 shadow-xl;
+  transition: all 0.3s ease-in-out;
+}
